@@ -9,6 +9,7 @@ import cors from "cors";
 import express from "express";
 import helmet from "helmet";
 import { connectToDatabase, disconnectFromDatabase } from "./lib/mongoose";
+import logger from "./lib/winston";
 import apiV1Router from "./routes/v1";
 
 const app = express();
@@ -51,10 +52,15 @@ app.use(expressRateLimiter);
 
     // Server listening
     app.listen(config.PORT, () => {
-      console.log(`Server is running on port http://localhost:${config.PORT}`);
+
+      logger.info(`Server is running on port http://localhost:${config.PORT}`, {
+        port: config.PORT,
+        environment: process.env.NODE_ENV || "development",
+        timestamp: new Date().toISOString(),
+      });
     });
   } catch (error) {
-    console.error("Error starting server", error);
+    logger.error("Error starting server", error);
 
     if (process.env.NODE_ENV === "production") {
       process.exit(1); // Exit the process if in production or trigger restart
@@ -67,10 +73,10 @@ app.use(expressRateLimiter);
 const handleServerShutdown = async () => {
   try {
     await disconnectFromDatabase();
-    console.log("Server is shutting down...");
+    logger.warn("Server is shutting down...");
     process.exit(0);
   } catch (error) {
-    console.error("Error shutting down server", error);
+    logger.error("Error shutting down server", error);
   }
 };
 

@@ -9,6 +9,7 @@ const config = {
   MONGO_DB_URI: process.env.MONGO_DB_URI,
   MONGO_DB_NAME: process.env.MONGO_DB_NAME || "blog-db",
   APP_NAME: process.env.APP_NAME,
+  LOG_LEVEL: process.env.LOG_LEVEL || "info",
 };
 
 export default config;
