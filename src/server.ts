@@ -8,6 +8,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import express from "express";
 import helmet from "helmet";
+import { connectToDatabase, disconnectFromDatabase } from "./lib/mongoose";
 import apiV1Router from "./routes/v1";
 
 const app = express();
@@ -19,7 +20,7 @@ const app = express();
 // Cors middleware
 app.use(
   cors({
-    origin: ["http://localhost:8080"], // Allow this frontend
+    origin: [config.FRONTEND_URL], // Allow this frontend
     credentials: true, // Allow cookies
   }),
 );
@@ -44,11 +45,13 @@ app.use(expressRateLimiter);
 
 (async () => {
   try {
+    await connectToDatabase();
+
     app.use("/api/v1", apiV1Router);
 
     // Server listening
-    app.listen(config.port, () => {
-      console.log(`Server is running on port http://localhost:${config.port}`);
+    app.listen(config.PORT, () => {
+      console.log(`Server is running on port http://localhost:${config.PORT}`);
     });
   } catch (error) {
     console.error("Error starting server", error);
@@ -63,6 +66,7 @@ app.use(expressRateLimiter);
 // like closing database connections, releasing resources, etc.
 const handleServerShutdown = async () => {
   try {
+    await disconnectFromDatabase();
     console.log("Server is shutting down...");
     process.exit(0);
   } catch (error) {
