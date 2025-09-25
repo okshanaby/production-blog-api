@@ -8,6 +8,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import express from "express";
 import helmet from "helmet";
+import apiV1Router from "./routes/v1";
 
 const app = express();
 
@@ -43,9 +44,7 @@ app.use(expressRateLimiter);
 
 (async () => {
   try {
-    app.get("/", (_, res) => {
-      res.json({ message: "Hello World" });
-    });
+    app.use("/api/v1", apiV1Router);
 
     // Server listening
     app.listen(config.port, () => {
@@ -55,7 +54,24 @@ app.use(expressRateLimiter);
     console.error("Error starting server", error);
 
     if (process.env.NODE_ENV === "production") {
-      process.exit(1);
+      process.exit(1); // Exit the process if in production or trigger restart
     }
   }
 })();
+
+// Handle server shutdown: cleanup operations before exiting
+// like closing database connections, releasing resources, etc.
+const handleServerShutdown = async () => {
+  try {
+    console.log("Server is shutting down...");
+    process.exit(0);
+  } catch (error) {
+    console.error("Error shutting down server", error);
+  }
+};
+
+// listen for termination signals and gracefully shutdown the server
+// SIGINT triggered when user interrupts the process (e.g. Ctrl+C)
+// SIGTERM triggered when the process is terminated by the system (e.g. kill command)
+process.on("SIGINT", handleServerShutdown);
+process.on("SIGTERM", handleServerShutdown);
