@@ -11,7 +11,7 @@ import userModel, { UserType } from "@/models/v1/userModel";
 import { generateAccessToken, generateRefreshToken } from "@/modules/authModule";
 
 // Types ---------------------------------------------------------------
-type UserData = Pick<UserType, "email" | "password" | "role">;
+type UserData = Pick<UserType, "email" | "password" | "role"| "username">;
 
 // =========================================================================
 // REGISTER CONTROLLER =====================================================
@@ -20,7 +20,7 @@ export const register = async (req: Request, res: Response) => {
   // TODO: Validate on middleware first
 
   // Get the body
-  const { email, password, role } = req.body as UserData;
+  const { email, password, role, username } = req.body as UserData;
 
   // check admin role if email is whitelisted
   if (role === "admin" && !config.WHITELISTED_ADMIN_EMAILS.includes(email)) {
@@ -48,12 +48,12 @@ export const register = async (req: Request, res: Response) => {
     }
 
     // generate username
-    const username = generateUsername();
+    const generatedUsername = username || generateUsername();
 
     // hash password on pre save hook
 
     // create user
-    const newUser = await userModel.create({ email, password, role, username });
+    const newUser = await userModel.create({ email, password, role, username: generatedUsername });
 
     // generate tokens
     const accessToken = generateAccessToken(newUser._id);
