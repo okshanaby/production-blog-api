@@ -10,6 +10,7 @@ import express from "express";
 import helmet from "helmet";
 import { connectToDatabase, disconnectFromDatabase } from "./lib/mongoose";
 import logger from "./lib/winston";
+import globalErrorHandler from "./middlewares/globalErrorHandler";
 import apiV1Router from "./routes/v1";
 
 const app = express();
@@ -49,6 +50,9 @@ app.use(expressRateLimiter);
     await connectToDatabase();
 
     app.use("/api/v1", apiV1Router);
+
+    // Error handler LAST (catches anything thrown above)
+    app.use(globalErrorHandler); // middleware for handling errors
 
     // Server listening
     app.listen(config.PORT, () => {

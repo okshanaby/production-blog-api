@@ -1,5 +1,5 @@
 // Node Modules -------------------------------------------------------
-import type { Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 
 // Local Modules -------------------------------------------------------
 import config from "@/config";
@@ -9,6 +9,7 @@ import logger from "@/lib/winston";
 import sessionModel from "@/models/v1/sessionModel";
 import userModel, { UserType } from "@/models/v1/userModel";
 import { generateAccessToken, generateRefreshToken } from "@/modules/authModule";
+import ErrorHandler from "@/utils/errorHandler";
 
 // Types ---------------------------------------------------------------
 type UserData = Pick<UserType, "email" | "password" | "role" | "username">;
@@ -16,7 +17,7 @@ type UserData = Pick<UserType, "email" | "password" | "role" | "username">;
 // =========================================================================
 // REGISTER CONTROLLER =====================================================
 // =========================================================================
-const register = async (req: Request, res: Response) => {
+const register = async (req: Request, res: Response, next: NextFunction) => {
   // Get the body
   const { email, password, role, username } = req.body as UserData;
 
@@ -24,12 +25,7 @@ const register = async (req: Request, res: Response) => {
   if (role === "admin" && !config.WHITELISTED_ADMIN_EMAILS.includes(email)) {
     logger.warn(`User ${email} tried to register as an admin but is not whitelisted`);
 
-    return res.status(403).json({
-      message: "You cannot register as an admin",
-      success: false,
-      status: "ERROR",
-      code: "AuthorizationError",
-    });
+    throw new ErrorHandler("You cannot register as an admin", 403, "register", "AuthorizationError");
   }
 
   try {
@@ -37,12 +33,7 @@ const register = async (req: Request, res: Response) => {
     const user = await userModel.findOne({ email });
 
     if (user) {
-      return res.status(400).json({
-        message: "User already exists",
-        success: false,
-        status: "ERROR",
-        code: "BadRequest",
-      });
+      throw new ErrorHandler("User already exists", 400, "register", "BadRequest");
     }
 
     // generate username
@@ -94,14 +85,7 @@ const register = async (req: Request, res: Response) => {
       accessToken,
     });
   } catch (error) {
-    logger.error("Error registering user", error);
-
-    res.status(500).json({
-      message: "Register failed",
-      success: false,
-      status: "ERROR",
-      code: "InternalServerError",
-    });
+    next(error);
   }
 };
 

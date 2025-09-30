@@ -1,3 +1,4 @@
+import ErrorHandler from "@/utils/errorHandler";
 import { NextFunction, Request, Response } from "express";
 import { z } from "zod";
 
@@ -11,16 +12,7 @@ export const inputValidator =
         message: err.message,
       }));
 
-      res
-        .status(400)
-        .json({
-          success: false,
-          message: "Input validation failed",
-          status: "ERROR",
-          code: "InputValidationError",
-          errors: formattedErrors,
-        });
-      return;
+      throw new ErrorHandler("Input validation failed", 400, "inputValidator", "InputValidationError", formattedErrors);
     }
 
     next();

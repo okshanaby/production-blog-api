@@ -1,11 +1,11 @@
 import config from "@/config";
 import { AUTH_CONSTANTS } from "@/constants";
 import { parseUserAgent } from "@/helpers/authHelpers";
-import logger from "@/lib/winston";
 import sessionModel from "@/models/v1/sessionModel";
 import userModel, { UserType } from "@/models/v1/userModel";
 import { comparePassword, generateAccessToken, generateRefreshToken } from "@/modules/authModule";
-import type { Request, Response } from "express";
+import ErrorHandler from "@/utils/errorHandler";
+import type { NextFunction, Request, Response } from "express";
 
 // Types ---------------------------------------------------------------
 type UserData = Pick<UserType, "email" | "password">;
@@ -13,7 +13,7 @@ type UserData = Pick<UserType, "email" | "password">;
 // =========================================================================
 // LOGIN CONTROLLER ========================================================
 // =========================================================================
-const login = async (req: Request, res: Response) => {
+const login = async (req: Request, res: Response, next: NextFunction) => {
   // Get the body
   const { email, password } = req.body as UserData;
 
@@ -22,24 +22,14 @@ const login = async (req: Request, res: Response) => {
     const user = await userModel.findOne({ email }).select("username email role password").lean().exec();
 
     if (!user) {
-      return res.status(404).json({
-        message: "User not found",
-        success: false,
-        status: "ERROR",
-        code: "NotFound",
-      });
+      throw new ErrorHandler("User not found", 404, "login", "NotFound");
     }
 
     // compare password
     const isMatch = await comparePassword(password, user.password);
 
     if (!isMatch) {
-      return res.status(401).json({
-        message: "Invalid credentials",
-        success: false,
-        status: "ERROR",
-        code: "InvalidCredentials",
-      });
+      throw new ErrorHandler("Invalid credentials", 401, "login", "InvalidCredentials");
     }
 
     // generate tokens
@@ -85,14 +75,7 @@ const login = async (req: Request, res: Response) => {
     });
     // Catch Error -------------------------------------------------------------
   } catch (error) {
-    logger.error("Error logging in user", error);
-
-    res.status(500).json({
-      message: "Login failed",
-      success: false,
-      status: "ERROR",
-      code: "InternalServerError",
-    });
+    next(error);
   }
 };
 
