@@ -1,7 +1,9 @@
 import { Router } from "express";
+import authRouter from "./authRouter";
 
 const apiV1Router = Router();
 
+// Root route
 apiV1Router.get("/", (_, res) => {
   res.json({
     message: "API is live",
@@ -12,5 +14,8 @@ apiV1Router.get("/", (_, res) => {
     timestamp: new Date().toISOString(),
   });
 });
+
+// Auth routes
+apiV1Router.use("/auth", authRouter);
 
 export default apiV1Router;

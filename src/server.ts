@@ -52,12 +52,7 @@ app.use(expressRateLimiter);
 
     // Server listening
     app.listen(config.PORT, () => {
-
-      logger.info(`Server is running on port http://localhost:${config.PORT}`, {
-        port: config.PORT,
-        environment: process.env.NODE_ENV || "development",
-        timestamp: new Date().toISOString(),
-      });
+      logger.info(`Server is running on port http://localhost:${config.PORT}`);
     });
   } catch (error) {
     logger.error("Error starting server", error);
