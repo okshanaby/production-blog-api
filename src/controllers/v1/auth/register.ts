@@ -11,14 +11,12 @@ import userModel, { UserType } from "@/models/v1/userModel";
 import { generateAccessToken, generateRefreshToken } from "@/modules/authModule";
 
 // Types ---------------------------------------------------------------
-type UserData = Pick<UserType, "email" | "password" | "role"| "username">;
+type UserData = Pick<UserType, "email" | "password" | "role" | "username">;
 
 // =========================================================================
 // REGISTER CONTROLLER =====================================================
 // =========================================================================
-export const register = async (req: Request, res: Response) => {
-  // TODO: Validate on middleware first
-
+const register = async (req: Request, res: Response) => {
   // Get the body
   const { email, password, role, username } = req.body as UserData;
 
@@ -106,3 +104,5 @@ export const register = async (req: Request, res: Response) => {
     });
   }
 };
+
+export default register;
