@@ -50,3 +50,19 @@ export const generateRefreshToken = (userId: Types.ObjectId) => {
 
   return refreshToken;
 };
+
+export const verifyRefreshToken = (refreshToken: string) => {
+  if (!config.JWT_REFRESH_SECRET) {
+    throw new Error("JWT_SECRET is not defined");
+  }
+
+  return jwt.verify(refreshToken, config.JWT_REFRESH_SECRET);
+};
+
+export const verifyAccessToken = (accessToken: string) => {
+  if (!config.JWT_ACCESS_SECRET) {
+    throw new Error("JWT_SECRET is not defined");
+  }
+
+  return jwt.verify(accessToken, config.JWT_ACCESS_SECRET);
+};

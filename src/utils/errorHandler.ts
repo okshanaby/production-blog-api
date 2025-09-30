@@ -7,7 +7,8 @@ type CodeType =
   | "Conflict"
   | "InputValidationError"
   | "AuthorizationError"
-  | "InvalidCredentials";
+  | "InvalidCredentials"
+  | "AuthenticationError";
 
 class ErrorHandler extends Error {
   public statusCode: number;
