@@ -6,11 +6,11 @@ import { NextFunction, Request, Response } from "express";
 // GET USER BY ID CONTROLLER ==================================================
 // ============================================================================
 const getUserById = async (req: Request, res: Response, next: NextFunction) => {
-  const { id } = req.params;
+  const { userId } = req.params;
 
   try {
     // get user from db
-    const user = await User.findById(id).select("-__v").lean().exec();
+    const user = await User.findById(userId).select("-__v").lean().exec();
 
     // check if user exists
     if (!user) {  

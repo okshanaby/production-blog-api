@@ -2,22 +2,24 @@ import User from "@/models/v1/userModel";
 import { NextFunction, Request, Response } from "express";
 
 // ============================================================================
-// DELETE USER PROFILE CONTROLLER ==================================================
+// DELETE USER BY ID CONTROLLER ==================================================
 // ============================================================================
-const deleteUserProfile = async (req: Request, res: Response, next: NextFunction) => {
-  const { userId } = req;
+const deleteUserById = async (req: Request, res: Response, next: NextFunction) => {
+  const { userId } = req.params;
 
   try {
+    // delete user from db
     await User.deleteOne({ _id: userId }).lean().exec();
 
+    // send response
     res.json({
       success: true,
       status: "OK",
-      message: "User profile deleted successfully",
+      message: "User deleted successfully",
     });
   } catch (error) {
     next(error);
   }
 };
 
-export default deleteUserProfile;
+export default deleteUserById;

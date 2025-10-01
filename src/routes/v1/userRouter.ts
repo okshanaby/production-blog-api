@@ -1,4 +1,5 @@
 // Controller ------------------------------------------------------------------
+import deleteUserById from "@/controllers/v1/user/deleteUserById";
 import deleteUserProfile from "@/controllers/v1/user/deleteUserProfile";
 import getAllUsers from "@/controllers/v1/user/getAllUsers";
 import getUserById from "@/controllers/v1/user/getUserById";
@@ -33,6 +34,7 @@ userRouter.delete("/profile", authenticate, authorize(["admin", "user"]), delete
 
 // ADMIN ROUTES =============================================================
 userRouter.get("/", authenticate, authorize(["admin"]), queryParamsValidator(getAllUsersSchema), getAllUsers);
-userRouter.get("/:id", authenticate, authorize(["admin"]), routeParamsValidator(getUserByIdSchema), getUserById);
+userRouter.get("/:userId", authenticate, authorize(["admin"]), routeParamsValidator(getUserByIdSchema), getUserById);
+userRouter.delete("/:userId", authenticate, authorize(["admin"]), routeParamsValidator(getUserByIdSchema), deleteUserById);
 
 export default userRouter;
