@@ -36,14 +36,21 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
     const accessToken = generateAccessToken(user._id);
     const refreshToken = generateRefreshToken(user._id);
 
-    // store refresh token in db
-    await sessionModel.create({
-      userId: user._id,
-      token: refreshToken,
-      ip: req.ip,
-      userAgent: req.get("User-Agent"),
-      device: parseUserAgent(req.get("User-Agent")),
-    });
+    // Use findOneAndUpdate with upsert for better performance
+    // This will either update existing session or create new one
+    await sessionModel.findOneAndUpdate(
+      { userId: user._id },
+      {
+        userId: user._id,
+        token: refreshToken,
+        ip: req.ip,
+        userAgent: req.get("User-Agent"),
+        device: parseUserAgent(req.get("User-Agent")),
+        lastUsed: new Date(),
+        expiresAt: new Date(Date.now() + AUTH_CONSTANTS.REFRESH_TOKEN_EXPIRES_MS),
+      },
+      { upsert: true, new: true },
+    );
 
     // set cookies
     res.cookie("accessToken", accessToken, {

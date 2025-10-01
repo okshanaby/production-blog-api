@@ -1,4 +1,5 @@
 import login from "@/controllers/v1/auth/login";
+import logout from "@/controllers/v1/auth/logout";
 import refreshToken from "@/controllers/v1/auth/refreshToken";
 import register from "@/controllers/v1/auth/register";
 import { inputValidator } from "@/middlewares/inputValidator";
@@ -10,5 +11,7 @@ const authRouter = Router();
 authRouter.post("/register", inputValidator(registerSchema), register);
 authRouter.post("/login", inputValidator(loginSchema), login);
 authRouter.post("/refresh-token", refreshToken);
+authRouter.post("/logout", logout);
+// authRouter.post("/logout", authenticate, logout);
 
 export default authRouter;
