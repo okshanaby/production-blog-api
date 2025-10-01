@@ -1,3 +1,4 @@
+import deleteUserProfile from "@/controllers/v1/user/deleteUserProfile";
 import getUserProfile from "@/controllers/v1/user/getUserProfile";
 import updateUserProfile from "@/controllers/v1/user/updateUserProfile";
 import authenticate from "@/middlewares/authenticate";
@@ -16,5 +17,6 @@ userRouter.put(
   inputValidator(updateUserProfileSchema),
   updateUserProfile,
 );
+userRouter.delete("/profile", authenticate, authorize(["admin", "user"]), deleteUserProfile);
 
 export default userRouter;
