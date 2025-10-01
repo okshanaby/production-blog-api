@@ -5,3 +5,8 @@ export const AUTH_CONSTANTS = {
   REFRESH_TOKEN_EXPIRES_IN: "7d",
   REFRESH_TOKEN_EXPIRES_MS: 7 * 24 * 60 * 60 * 1000, // 7 days
 } as const;
+
+export const PAGINATION_CONSTANTS = {
+  DEFAULT_LIMIT: 20,
+  DEFAULT_OFFSET: 0,
+} as const;

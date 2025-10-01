@@ -27,3 +27,22 @@ export const updateUserProfileSchema = z.object({
     })
     .optional(),
 });
+
+export const getAllUsersSchema = z.object({
+  limit: z
+    .string()
+    .optional()
+    .transform((val) => (val ? parseInt(val, 10) : undefined))
+    .pipe(
+      z
+        .number()
+        .min(1, { message: "Limit must be greater than 0" })
+        .max(50, { message: "Limit must be less than 50" })
+        .optional(),
+    ),
+  offset: z
+    .string()
+    .optional()
+    .transform((val) => (val ? parseInt(val, 10) : undefined))
+    .pipe(z.number().min(0, { message: "Offset must be greater than or equal to 0" }).optional()),
+});

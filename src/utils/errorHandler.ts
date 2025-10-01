@@ -8,7 +8,8 @@ type CodeType =
   | "InputValidationError"
   | "AuthorizationError"
   | "InvalidCredentials"
-  | "AuthenticationError";
+  | "AuthenticationError"
+  | "QueryParamsValidationError";
 
 class ErrorHandler extends Error {
   public statusCode: number;
