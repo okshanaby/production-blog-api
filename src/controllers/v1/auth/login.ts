@@ -1,7 +1,7 @@
 import config from "@/config";
 import { AUTH_CONSTANTS } from "@/constants";
 import { parseUserAgent } from "@/helpers/authHelpers";
-import sessionModel from "@/models/v1/sessionModel";
+import Session from "@/models/v1/sessionModel";
 import userModel, { UserType } from "@/models/v1/userModel";
 import { comparePassword, generateAccessToken, generateRefreshToken } from "@/modules/authModule";
 import ErrorHandler from "@/utils/errorHandler";
@@ -38,7 +38,7 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
 
     // Use findOneAndUpdate with upsert for better performance
     // This will either update existing session or create new one
-    await sessionModel.findOneAndUpdate(
+    await Session.findOneAndUpdate(
       { userId: user._id },
       {
         userId: user._id,

@@ -6,8 +6,8 @@ import config from "@/config";
 import { AUTH_CONSTANTS } from "@/constants";
 import { generateUsername, parseUserAgent } from "@/helpers/authHelpers";
 import logger from "@/lib/winston";
-import sessionModel from "@/models/v1/sessionModel";
-import userModel, { UserType } from "@/models/v1/userModel";
+import Session from "@/models/v1/sessionModel";
+import User, { UserType } from "@/models/v1/userModel";
 import { generateAccessToken, generateRefreshToken } from "@/modules/authModule";
 import ErrorHandler from "@/utils/errorHandler";
 
@@ -30,7 +30,7 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
 
   try {
     // check user if exists
-    const user = await userModel.findOne({ email });
+    const user = await User.findOne({ email });
 
     if (user) {
       throw new ErrorHandler("User already exists", 400, "register", "BadRequest");
@@ -42,14 +42,14 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
     // hash password on pre save hook
 
     // create user
-    const newUser = await userModel.create({ email, password, role, username: generatedUsername });
+    const newUser = await User.create({ email, password, role, username: generatedUsername });
 
     // generate tokens
     const accessToken = generateAccessToken(newUser._id);
     const refreshToken = generateRefreshToken(newUser._id);
 
     // store refresh token in db
-    await sessionModel.create({
+    await Session.create({
       userId: newUser._id,
       token: refreshToken,
       ip: req.ip,

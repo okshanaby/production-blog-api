@@ -1,4 +1,4 @@
-import sessionModel from "@/models/v1/sessionModel";
+import Session from "@/models/v1/sessionModel";
 import { NextFunction, Request, Response } from "express";
 
 const logout = async (req: Request, res: Response, next: NextFunction) => {
@@ -7,7 +7,7 @@ const logout = async (req: Request, res: Response, next: NextFunction) => {
   try {
     if (refreshToken) {
       // Single operation: delete the current session
-      await sessionModel.deleteOne({ token: refreshToken });
+      await Session.deleteOne({ token: refreshToken });
     }
 
     // clear cookies

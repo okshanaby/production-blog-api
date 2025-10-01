@@ -1,6 +1,6 @@
 import config from "@/config";
 import { AUTH_CONSTANTS } from "@/constants";
-import sessionModel from "@/models/v1/sessionModel";
+import Session from "@/models/v1/sessionModel";
 import { generateAccessToken, verifyRefreshToken } from "@/modules/authModule";
 import ErrorHandler from "@/utils/errorHandler";
 import { NextFunction, Request, Response } from "express";
@@ -19,7 +19,7 @@ const refreshToken = async (req: Request, res: Response, next: NextFunction) => 
 
   try {
     // check if token exists in db
-    const token = await sessionModel.exists({ token: refreshToken }); // returns only _id or null
+    const token = await Session.exists({ token: refreshToken }); // returns only _id or null
 
     if (!token) {
       throw new ErrorHandler("Refresh token is invalid", 401, "refreshToken", "AuthenticationError");
