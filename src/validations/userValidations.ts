@@ -46,3 +46,7 @@ export const getAllUsersSchema = z.object({
     .transform((val) => (val ? parseInt(val, 10) : undefined))
     .pipe(z.number().min(0, { message: "Offset must be greater than or equal to 0" }).optional()),
 });
+
+export const getUserByIdSchema = z.object({
+  id: z.string().regex(/^[0-9a-fA-F]{24}$/, "Invalid MongoDB ObjectId"),
+});

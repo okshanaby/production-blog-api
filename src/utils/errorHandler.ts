@@ -9,6 +9,7 @@ type CodeType =
   | "AuthorizationError"
   | "InvalidCredentials"
   | "AuthenticationError"
+  | "RouteParamsValidationError"
   | "QueryParamsValidationError";
 
 class ErrorHandler extends Error {
