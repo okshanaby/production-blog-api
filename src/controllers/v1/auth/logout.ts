@@ -7,7 +7,7 @@ const logout = async (req: Request, res: Response, next: NextFunction) => {
   try {
     if (refreshToken) {
       // Single operation: delete the current session
-      await Session.deleteOne({ token: refreshToken });
+      await Session.deleteOne({ token: refreshToken }).lean().exec();
     }
 
     // clear cookies

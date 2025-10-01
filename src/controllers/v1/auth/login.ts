@@ -2,7 +2,7 @@ import config from "@/config";
 import { AUTH_CONSTANTS } from "@/constants";
 import { parseUserAgent } from "@/helpers/authHelpers";
 import Session from "@/models/v1/sessionModel";
-import userModel, { UserType } from "@/models/v1/userModel";
+import User, { UserType } from "@/models/v1/userModel";
 import { comparePassword, generateAccessToken, generateRefreshToken } from "@/modules/authModule";
 import ErrorHandler from "@/utils/errorHandler";
 import type { NextFunction, Request, Response } from "express";
@@ -19,7 +19,7 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
 
   try {
     // check user if exists
-    const user = await userModel.findOne({ email }).select("username email role password").lean().exec();
+    const user = await User.findOne({ email }).select("username email role password").lean().exec();
 
     if (!user) {
       throw new ErrorHandler("User not found", 404, "login", "NotFound");
@@ -50,7 +50,9 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
         expiresAt: new Date(Date.now() + AUTH_CONSTANTS.REFRESH_TOKEN_EXPIRES_MS),
       },
       { upsert: true, new: true },
-    );
+    )
+      .lean()
+      .exec();
 
     // set cookies
     res.cookie("accessToken", accessToken, {

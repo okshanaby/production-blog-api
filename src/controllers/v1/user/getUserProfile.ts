@@ -2,12 +2,12 @@ import User from "@/models/v1/userModel";
 import ErrorHandler from "@/utils/errorHandler";
 import { NextFunction, Request, Response } from "express";
 
-const getUser = async (req: Request, res: Response, next: NextFunction) => {
+const getUserProfile = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const user = await User.findById(req.userId).select("-__v").lean().exec();
 
     if (!user) {
-      throw new ErrorHandler("User not found", 404, "getUser", "NotFound");
+      throw new ErrorHandler("User not found", 404, "getUserProfile", "NotFound");
     }
 
     res.json({
@@ -21,4 +21,4 @@ const getUser = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-export default getUser;
+export default getUserProfile;

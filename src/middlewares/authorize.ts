@@ -8,7 +8,7 @@ const authorize = (roles: string[]) => {
 
     try {
       // find user by id
-      const user = await User.findById(userId).select("role").exec();
+      const user = await User.findById(userId).select("role").lean().exec();
 
       // check if user exists
       if (!user) {

@@ -30,7 +30,7 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
 
   try {
     // check user if exists
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email }).lean().exec();
 
     if (user) {
       throw new ErrorHandler("User already exists", 400, "register", "BadRequest");

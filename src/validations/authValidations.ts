@@ -25,27 +25,6 @@ export const registerSchema = z.object({
   role: z.enum(["admin", "user"]).optional(),
 });
 
-// export const updateProfileSchema = z.object({
-//   bio: z
-//     .string()
-//     .max(200)
-//     .optional()
-//     .transform((val) => (val ? sanitizeString(val) : val)),
-
-//   website: z
-//     .url()
-//     .max(100)
-//     .optional()
-//     .refine(
-//       (val) =>
-//         !val ||
-//         validator.isURL(val, {
-//           protocols: ["http", "https"],
-//           require_protocol: true,
-//         }),
-//     ),
-// });
-
 export const loginSchema = z.object({
   email: z.email("Invalid email").max(50, { error: "Email must be less than 50 characters" }).toLowerCase().trim(),
   password: z
