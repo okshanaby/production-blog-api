@@ -1,4 +1,5 @@
 import { model, Schema, Types } from "mongoose";
+import slugify from "slugify";
 
 export type BlogType = {
   title: string;
@@ -66,5 +67,13 @@ const blogSchema = new Schema<BlogType>(
   },
   { timestamps: true },
 );
+
+blogSchema.pre("save", async function (next) {
+  if (!this.isModified("title")) {
+    return next();
+  }
+  this.slug = slugify(this.title, { lower: true, strict: true });
+  next();
+});
 
 export default model<BlogType>("Blog", blogSchema);

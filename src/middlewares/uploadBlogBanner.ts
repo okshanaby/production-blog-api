@@ -1,6 +1,7 @@
 import { UPLOAD_CONSTANTS } from "@/constants";
 import uploadToCloudinary from "@/lib/cloudinary";
 import logger from "@/lib/winston";
+import Blog from "@/models/v1/blogModel";
 import ErrorHandler from "@/utils/errorHandler";
 import { NextFunction, Request, Response } from "express";
 import multer from "multer";
@@ -40,8 +41,14 @@ const uploadBlogBanner = (method: "post" | "put") => {
     }
 
     try {
+      // this is for updating the blog post banner
+      const { blogPostId } = req.params;
+      const blogPost = await Blog.findById(blogPostId).lean().exec();
 
-      const data = await uploadToCloudinary(req.file.buffer, req.file.originalname);
+      const data = await uploadToCloudinary(
+        req.file.buffer,
+        blogPost?.banner.publicId.replace("blog-api/", "") || req.file.originalname,
+      );
 
       if (!data) {
         logger.error("Failed to upload banner image");

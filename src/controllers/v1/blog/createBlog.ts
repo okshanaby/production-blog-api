@@ -12,10 +12,9 @@ const createBlog = async (req: Request, res: Response, next: NextFunction) => {
   const { title, content, banner, isPublished } = req.body as BlogData;
   const author = req.userId;
 
-  const slug = slugify(title, { lower: true, strict: true });
 
   try {
-    const blog = await Blog.create({ title, content, author, banner, isPublished, slug });
+    const blog = await Blog.create({ title, content, author, banner, isPublished });
 
     res.status(201).json({
       message: "Blog created successfully",
