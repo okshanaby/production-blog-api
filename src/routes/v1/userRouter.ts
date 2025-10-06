@@ -14,7 +14,7 @@ import { queryParamsValidator } from "@/middlewares/queryParamsValidator";
 import { routeParamsValidator } from "@/middlewares/routeParamsValidator";
 
 // Validation ------------------------------------------------------------------
-import { getAllUsersSchema, getUserByIdSchema, updateUserProfileSchema } from "@/validations/userValidations";
+import { getAllContentSchema, getUserByIdSchema, updateUserProfileSchema } from "@/validations/userValidations";
 
 // Router ------------------------------------------------------------------
 import { Router } from "express";
@@ -33,8 +33,14 @@ userRouter.put(
 userRouter.delete("/profile", authenticate, authorize(["admin", "user"]), deleteUserProfile);
 
 // ADMIN ROUTES =============================================================
-userRouter.get("/", authenticate, authorize(["admin"]), queryParamsValidator(getAllUsersSchema), getAllUsers);
+userRouter.get("/", authenticate, authorize(["admin"]), queryParamsValidator(getAllContentSchema), getAllUsers);
 userRouter.get("/:userId", authenticate, authorize(["admin"]), routeParamsValidator(getUserByIdSchema), getUserById);
-userRouter.delete("/:userId", authenticate, authorize(["admin"]), routeParamsValidator(getUserByIdSchema), deleteUserById);
+userRouter.delete(
+  "/:userId",
+  authenticate,
+  authorize(["admin"]),
+  routeParamsValidator(getUserByIdSchema),
+  deleteUserById,
+);
 
 export default userRouter;

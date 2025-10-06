@@ -36,7 +36,7 @@ export const updateUserProfileSchema = z.object({
     .optional(),
 });
 
-export const getAllUsersSchema = z.object({
+export const getAllContentSchema = z.object({
   limit: z
     .string()
     .optional()
