@@ -55,6 +55,6 @@ export const getAllContentSchema = z.object({
     .pipe(z.number().min(0, { message: "Offset must be greater than or equal to 0" }).optional()),
 });
 
-export const getUserByIdSchema = z.object({
+export const getContentByIdSchema = z.object({
   userId: z.string().regex(/^[0-9a-fA-F]{24}$/, "Invalid user ID (MongoDB ObjectId)"),
 });

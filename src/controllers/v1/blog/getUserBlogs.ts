@@ -3,14 +3,15 @@ import Blog from "@/models/v1/blogModel";
 import User from "@/models/v1/userModel";
 import { NextFunction, Request, Response } from "express";
 
-// =====================================================================================
-// GET ALL BLOGS CONTROLLER ==========================================================
-// =====================================================================================
-const getAllBlogs = async (req: Request, res: Response, next: NextFunction) => {
+// =========================================================================
+// GET USER BLOGS CONTROLLER =================================================
+// =========================================================================
+const getUserBlogs = async (req: Request, res: Response, next: NextFunction) => {
   const limit = req.query.limit as string;
   const offset = req.query.offset as string;
 
-  const { userId } = req;
+  const { userId } = req.params;
+  const { userId: currentUserId } = req;
 
   // get query
   const query = {
@@ -20,25 +21,25 @@ const getAllBlogs = async (req: Request, res: Response, next: NextFunction) => {
 
   // get filter
   const filter = {
+    author: userId,
     isPublished: false,
   };
 
   try {
-    // get user
-    const user = await User.findById(userId).select("role").lean().exec();
+    // get user role
+    const user = await User.findById(currentUserId).select("role").lean().exec();
 
     // show only published blogs to normal user
     if (user?.role === "user") {
       filter.isPublished = true;
     }
 
-    // get total blogs
+    // get total user blogs
     const total = await Blog.countDocuments(filter).lean().exec();
 
     // get blogs
     const blogs = await Blog.find(filter)
       .select("-banner.publicId -__v")
-      .populate("author", "-createdAt -updatedAt -__v")
       .limit(query.limit)
       .skip(query.offset)
       .sort({ createdAt: -1 })
@@ -49,12 +50,12 @@ const getAllBlogs = async (req: Request, res: Response, next: NextFunction) => {
     res.json({
       success: true,
       status: "OK",
-      message: "Blogs fetched successfully",
+      message: "User blogs fetched successfully",
       data: {
-        blogs,
         total,
         limit: query.limit,
         offset: query.offset,
+        blogs,
       },
     });
   } catch (error) {
@@ -62,4 +63,4 @@ const getAllBlogs = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-export default getAllBlogs;
+export default getUserBlogs;

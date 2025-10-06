@@ -3,6 +3,7 @@ import { Router } from "express";
 // Controller ------------------------------------------------------------------
 import createBlog from "@/controllers/v1/blog/createBlog";
 import getAllBlogs from "@/controllers/v1/blog/getAllBlogs";
+import getUserBlogs from "@/controllers/v1/blog/getUserBlogs";
 
 // Middleware ------------------------------------------------------------------
 import authenticate from "@/middlewares/authenticate";
@@ -12,8 +13,9 @@ import { queryParamsValidator } from "@/middlewares/queryParamsValidator";
 import uploadBlogBanner, { upload } from "@/middlewares/uploadBlogBanner";
 
 // Validation ------------------------------------------------------------------
+import { routeParamsValidator } from "@/middlewares/routeParamsValidator";
 import { createBlogSchema } from "@/validations/blogValidations";
-import { getAllContentSchema } from "@/validations/userValidations";
+import { getAllContentSchema, getContentByIdSchema } from "@/validations/userValidations";
 
 const blogRouter = Router();
 
@@ -29,5 +31,14 @@ blogRouter.post(
 );
 
 blogRouter.get("/", authenticate, authorize(["admin", "user"]), queryParamsValidator(getAllContentSchema), getAllBlogs);
+
+blogRouter.get(
+  "/:userId",
+  authenticate,
+  authorize(["admin", "user"]),
+  queryParamsValidator(getAllContentSchema),
+  routeParamsValidator(getContentByIdSchema),
+  getUserBlogs,
+);
 
 export default blogRouter;
