@@ -15,5 +15,7 @@ export const inputValidator =
       throw new ErrorHandler("Input validation failed", 400, "inputValidator", "InputValidationError", formattedErrors);
     }
 
+    // ✅ Assign sanitized and validated data back
+    req.body = { ...req.body, ...results.data };
     next();
   };

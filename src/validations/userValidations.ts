@@ -1,4 +1,4 @@
-import { sanitizeString } from "@/helpers/validationHelpers";
+import sanitizeHtml from "sanitize-html";
 import { z } from "zod";
 
 export const updateUserProfileSchema = z.object({
@@ -7,17 +7,25 @@ export const updateUserProfileSchema = z.object({
     .min(3, { error: "Username must be greater than 3 characters" })
     .max(20, { error: "Username must be less than 20 characters" })
     .regex(/^[a-zA-Z0-9_-]+$/, "Only alphanumeric, underscore, and hyphen allowed")
-    .transform(sanitizeString)
+    .transform((str) => sanitizeHtml(str))
     .optional(),
 
-  firstName: z.string().max(10, { error: "First name must be less than 10 characters" }).optional(),
-  lastName: z.string().max(10, { error: "Last name must be less than 10 characters" }).optional(),
+  firstName: z
+    .string()
+    .max(10, { error: "First name must be less than 10 characters" })
+    .transform((str) => sanitizeHtml(str))
+    .optional(),
+  lastName: z
+    .string()
+    .max(10, { error: "Last name must be less than 10 characters" })
+    .transform((str) => sanitizeHtml(str))
+    .optional(),
   profilePicture: z.url().max(100, { error: "Profile picture must be less than 100 characters" }).optional(),
   bio: z
     .string()
     .max(200, { error: "Bio must be less than 200 characters" })
-    .optional()
-    .transform((val) => (val ? sanitizeString(val) : val)),
+    .transform((str) => sanitizeHtml(str))
+    .optional(),
   website: z.url().max(50, { error: "Website must be less than 50 characters" }).optional(),
   socialMedia: z
     .object({

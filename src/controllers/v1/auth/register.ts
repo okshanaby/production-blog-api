@@ -88,5 +88,5 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
     next(error);
   }
 };
-
+ 
 export default register;

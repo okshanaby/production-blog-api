@@ -1,5 +1,5 @@
 // Enhanced validation schema
-import { sanitizeString } from "@/helpers/validationHelpers";
+import sanitizeHtml from "sanitize-html";
 import { z } from "zod";
 
 export const registerSchema = z.object({
@@ -19,7 +19,7 @@ export const registerSchema = z.object({
     .min(3, { error: "Username must be greater than 3 characters" })
     .max(20, { error: "Username must be less than 20 characters" })
     .regex(/^[a-zA-Z0-9_-]+$/, "Only alphanumeric, underscore, and hyphen allowed")
-    .transform(sanitizeString)
+    .transform((str) => sanitizeHtml(str))
     .optional(),
 
   role: z.enum(["admin", "user"]).optional(),
