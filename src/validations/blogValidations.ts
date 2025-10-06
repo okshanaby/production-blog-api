@@ -17,3 +17,7 @@ export const createBlogSchema = z.object({
     .min(1, { error: "Author is required" })
     .max(50, { error: "Author must be less than 50 characters" }),
 });
+
+export const getBlogPostByIdSchema = z.object({
+  blogPostId: z.string().regex(/^[0-9a-fA-F]{24}$/, "Invalid blog post ID (MongoDB ObjectId)"),
+});
