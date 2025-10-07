@@ -18,6 +18,7 @@ import uploadBlogBanner, { upload } from "@/middlewares/uploadBlogBanner";
 import updateBlogPost from "@/controllers/v1/blog/updateBlogPost";
 import { createBlogSchema, getBlogPostByIdSchema, updateBlogSchema } from "@/validations/blogValidations";
 import { getAllContentSchema, getContentByIdSchema } from "@/validations/userValidations";
+import deleteBlog from "@/controllers/v1/blog/deleteBlog";
 
 const blogRouter = Router();
 
@@ -54,12 +55,20 @@ blogRouter.get(
 blogRouter.put(
   "/:blogPostId",
   authenticate,
-  authorize(["admin", "user"]),
+  authorize(["admin"]),
   routeParamsValidator(getBlogPostByIdSchema),
   upload.single("banner_image"),
   inputValidator(updateBlogSchema),
   uploadBlogBanner("put"),
   updateBlogPost,
+);
+
+blogRouter.delete(
+  "/:blogPostId",
+  authenticate,
+  authorize(["admin"]),
+  routeParamsValidator(getBlogPostByIdSchema),
+  deleteBlog,
 );
 
 export default blogRouter;

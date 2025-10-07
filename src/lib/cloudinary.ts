@@ -1,4 +1,5 @@
 import config from "@/config";
+import ErrorHandler from "@/utils/errorHandler";
 import { v2 as cloudinary, UploadApiResponse } from "cloudinary";
 import logger from "./winston";
 
@@ -15,7 +16,7 @@ cloudinary.config({
 });
 
 // Upload to Cloudinary
-const uploadToCloudinary = (buffer: Buffer, publicId: string): Promise<UploadApiResponse | undefined> => {
+export const uploadToCloudinary = (buffer: Buffer, publicId: string): Promise<UploadApiResponse | undefined> => {
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
       {
@@ -38,4 +39,20 @@ const uploadToCloudinary = (buffer: Buffer, publicId: string): Promise<UploadApi
   });
 };
 
-export default uploadToCloudinary;
+export const deleteFromCloudinary = async (publicId: string): Promise<void> => {
+  try {
+    const result = await cloudinary.uploader.destroy(publicId);
+    if (result.result !== "ok" && result.result !== "not found") {
+      throw new ErrorHandler(
+        `Cloudinary deletion failed: ${JSON.stringify(result)}`,
+        500,
+        "deleteFromCloudinary",
+        "InternalServerError",
+        result,
+      );
+    }
+  } catch (error) {
+    logger.error("Error deleting from Cloudinary:", error);
+    throw new ErrorHandler("Error deleting from Cloudinary", 500, "deleteFromCloudinary", "InternalServerError", error);
+  }
+};

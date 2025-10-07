@@ -16,12 +16,12 @@ const updateBlogPost = async (req: Request, res: Response, next: NextFunction) =
   const { title, content, isPublished, banner } = req.body as UpdateBlogPostData;
 
   try {
-    // get user role
-    const user = await User.findById(userId).select("role").lean().exec();
+    // // get user role
+    // const user = await User.findById(userId).select("role").lean().exec();
 
-    if (user?.role === "user") {
-      throw new ErrorHandler("You don't have permission to update this blog post", 403, "updateBlogPost", "Forbidden");
-    }
+    // if (user?.role === "user") {
+    //   throw new ErrorHandler("You don't have permission to update this blog post", 403, "updateBlogPost", "Forbidden");
+    // } - removed this because we are using authorize middleware, for admin only
 
     // get blog post
     const blogPost = await Blog.findById(blogPostId).select("-banner.publicId -__v").exec();

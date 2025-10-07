@@ -1,5 +1,5 @@
 import { UPLOAD_CONSTANTS } from "@/constants";
-import uploadToCloudinary from "@/lib/cloudinary";
+import { uploadToCloudinary } from "@/lib/cloudinary";
 import logger from "@/lib/winston";
 import Blog from "@/models/v1/blogModel";
 import ErrorHandler from "@/utils/errorHandler";
