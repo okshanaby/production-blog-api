@@ -1,4 +1,5 @@
 import createComment from "@/controllers/v1/comment/createComment";
+import getBlogComments from "@/controllers/v1/comment/getBlogComments";
 import authenticate from "@/middlewares/authenticate";
 import authorize from "@/middlewares/authorize";
 import { inputValidator } from "@/middlewares/inputValidator";
@@ -16,6 +17,14 @@ commentRouter.post(
   routeParamsValidator(getBlogPostByIdSchema),
   inputValidator(createCommentSchema),
   createComment,
+);
+
+commentRouter.get(
+  "/blog/:blogPostId",
+  authenticate,
+  authorize(["admin", "user"]),
+  routeParamsValidator(getBlogPostByIdSchema),
+  getBlogComments,
 );
 
 export default commentRouter;
