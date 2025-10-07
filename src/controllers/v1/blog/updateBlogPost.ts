@@ -31,6 +31,9 @@ const updateBlogPost = async (req: Request, res: Response, next: NextFunction) =
       throw new ErrorHandler("Blog post not found", 404, "updateBlogPost", "NotFound");
     }
 
+    console.log("🚀 ~ updateBlogPost ~ userId:", userId)
+    console.log("🚀 ~ updateBlogPost ~ blogPost.author:", blogPost.author)
+    
     if (blogPost.author.toString() !== userId?.toString()) {
       throw new ErrorHandler("You don't have permission to update this blog post", 403, "updateBlogPost", "Forbidden");
     }

@@ -47,7 +47,7 @@ const uploadBlogBanner = (method: "post" | "put") => {
 
       const data = await uploadToCloudinary(
         req.file.buffer,
-        blogPost?.banner.publicId.replace("blog-api/", "") || req.file.originalname,
+        blogPost?.banner.publicId.replace("blog-api/", ""),
       );
 
       if (!data) {

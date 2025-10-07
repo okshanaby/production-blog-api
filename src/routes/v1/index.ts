@@ -1,6 +1,7 @@
 import { Router } from "express";
 import authRouter from "./authRouter";
 import blogRouter from "./blogRouter";
+import likeRouter from "./likeRouter";
 import userRouter from "./userRouter";
 
 const apiV1Router = Router();
@@ -21,5 +22,6 @@ apiV1Router.get("/", (_, res) => {
 apiV1Router.use("/auth", authRouter);
 apiV1Router.use("/users", userRouter);
 apiV1Router.use("/blogs", blogRouter);
+apiV1Router.use("/likes", likeRouter);
 
 export default apiV1Router;

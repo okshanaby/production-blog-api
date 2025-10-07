@@ -16,7 +16,7 @@ cloudinary.config({
 });
 
 // Upload to Cloudinary
-export const uploadToCloudinary = (buffer: Buffer, publicId: string): Promise<UploadApiResponse | undefined> => {
+export const uploadToCloudinary = (buffer: Buffer, publicId?: string): Promise<UploadApiResponse | undefined> => {
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
       {

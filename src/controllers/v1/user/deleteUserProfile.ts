@@ -22,6 +22,11 @@ const deleteUserProfile = async (req: Request, res: Response, next: NextFunction
       await Blog.deleteMany({ author: userId }).exec();
     }
 
+    // TODO: delete all user likes
+    // TODO: delete all user comments
+
+    // TODO: delete all user sessions
+
     // delete user from db
     await User.deleteOne({ _id: userId }).exec();
 
