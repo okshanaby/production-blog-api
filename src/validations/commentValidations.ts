@@ -8,3 +8,7 @@ export const createCommentSchema = z.object({
     .max(500, { error: "Content must be less than 500 characters" })
     .transform(sanitizeContent),
 });
+
+export const getCommentByIdSchema = z.object({
+  commentId: z.string().regex(/^[0-9a-fA-F]{24}$/, "Invalid comment ID (MongoDB ObjectId)"),
+});
