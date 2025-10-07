@@ -56,3 +56,77 @@ export const deleteFromCloudinary = async (publicId: string): Promise<void> => {
     throw new ErrorHandler("Error deleting from Cloudinary", 500, "deleteFromCloudinary", "InternalServerError", error);
   }
 };
+
+// export const deleteManyFromCloudinary = async (publicIds: string[]): Promise<void> => {
+//   try {
+//     const result = await cloudinary.api.delete_resources(publicIds);
+
+//     // Check if any deletion failed
+//     const failed = Object.values(result.deleted).some(
+//       status => status !== "deleted" && status !== "not found"
+//     );
+
+//     if (failed) {
+//       throw new ErrorHandler(
+//         `Cloudinary deletion failed for some assets: ${JSON.stringify(result)}`,
+//         500,
+//         "deleteManyFromCloudinary",
+//         "InternalServerError",
+//         result,
+//       );
+//     }
+
+//     logger.info(`Successfully deleted assets: ${publicIds.join(", ")}`);
+//   } catch (error) {
+//     logger.error("Error deleting from Cloudinary:", error);
+//     throw new ErrorHandler(
+//       "Error deleting from Cloudinary",
+//       500,
+//       "deleteManyFromCloudinary",
+//       "InternalServerError",
+//       error,
+//     );
+//   }
+// };
+
+export const deleteManyFromCloudinary = async (publicIds: string[]): Promise<void> => {
+  try {
+    const chunkSize = 100;
+
+    // delete assets in chunks of 100 at a time, since cloudinary has a limit of 100 assets per request
+    for (let i = 0; i < publicIds.length; i += chunkSize) {
+      const chunk = publicIds.slice(i, i + chunkSize);
+      logger.info(`Deleting Cloudinary assets ${i + 1} to ${i + chunk.length} of ${publicIds.length}...`);
+
+      const result = await cloudinary.api.delete_resources(chunk);
+
+      // Check if any deletion failed
+      const failed = Object.values(result.deleted).some(
+        status => status !== "deleted" && status !== "not found"
+      );
+
+      if (failed) {
+        throw new ErrorHandler(
+          `Cloudinary deletion failed for some assets in chunk ${i / chunkSize + 1}: ${JSON.stringify(result)}`,
+          500,
+          "deleteManyFromCloudinary",
+          "InternalServerError",
+          result,
+        );
+      }
+
+      logger.info(`✅ Successfully deleted chunk ${i / chunkSize + 1} (${chunk.length} assets)`);
+    }
+
+    logger.info(`✅ All ${publicIds.length} Cloudinary assets deleted successfully`);
+  } catch (error) {
+    logger.error("❌ Error deleting from Cloudinary:", error);
+    throw new ErrorHandler(
+      "Error deleting from Cloudinary",
+      500,
+      "deleteManyFromCloudinary",
+      "InternalServerError",
+      error,
+    );
+  }
+};

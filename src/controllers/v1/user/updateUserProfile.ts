@@ -1,12 +1,16 @@
+import logger from "@/lib/winston";
 import User from "@/models/v1/userModel";
 import ErrorHandler from "@/utils/errorHandler";
 import { NextFunction, Request, Response } from "express";
+import config from "@/config";
+
 
 const updateUserProfile = async (req: Request, res: Response, next: NextFunction) => {
   const { userId } = req;
 
   // get user body data
-  const { firstName, lastName, profilePicture, bio, website, linkedin, instagram, x, username } = req.body;
+  const { firstName, lastName, profilePicture, bio, website, linkedin, instagram, x, username, role } = req.body;
+
 
   try {
     // get user from db with password
@@ -15,6 +19,13 @@ const updateUserProfile = async (req: Request, res: Response, next: NextFunction
     // check if user exists
     if (!user) {
       throw new ErrorHandler("User not found", 404, "updateUserProfile", "NotFound");
+    }
+
+    // check admin role if email is whitelisted
+    if (role === "admin" && !config.WHITELISTED_ADMIN_EMAILS.includes(user.email)) {
+      logger.warn(`User ${user.email} tried to update profile but is not whitelisted`);
+
+      throw new ErrorHandler("You cannot update profile as an admin", 403, "updateUserProfile", "AuthorizationError");
     }
 
     // check if username is already taken
@@ -34,6 +45,7 @@ const updateUserProfile = async (req: Request, res: Response, next: NextFunction
     if (firstName) user.firstName = firstName;
     if (lastName) user.lastName = lastName;
     if (profilePicture) user.profilePicture = profilePicture;
+    if (role) user.role = role;
     if (bio) user.bio = bio;
     if (website) user.website = website;
     if (!user.socialMedia) user.socialMedia = {};
